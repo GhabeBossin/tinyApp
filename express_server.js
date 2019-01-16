@@ -15,8 +15,8 @@ const urlDatabase = {
 
 function generateRandomString() {
   //found package here: https://www.npmjs.com/package/randomstring
-  //console.log(randomString.generate(6));
-  randomString.generate(6);
+  const string = randomString.generate(6);
+  return string;
 }
 generateRandomString();
 
