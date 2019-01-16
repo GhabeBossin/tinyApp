@@ -1,0 +1,22 @@
+{
+  "name": "tiny_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "express_server.js",
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon -L express_server.js",
+    "test": "test"
+  },
+  "keywords": [
+    "url"
+  ],
+  "author": "G Bossin",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}
