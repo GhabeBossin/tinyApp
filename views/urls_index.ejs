@@ -15,7 +15,8 @@
       <%for (let url in urls){%>
         <li>
           <a href= '#'><%=url%> : <%=urls[url]%></a>
-          <form method="POST" action="/urls/9sm5xK/delete">
+          <p>wooo</p>
+          <form method="POST" action=/urls/<%=url%>/delete>
             <input type="submit" value=" Delete 🗑️ ">
           </form>
         </li>

@@ -13,12 +13,10 @@ function genRandomString() {
   const ranString = randomString.generate(6);
   return ranString;
 }
-//genRandomString();
 
 const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
-  // add generated ranString as key, for longURL value submitted in <form></form>
 };
 
 app.get('/', (request, response) => {
@@ -35,7 +33,6 @@ app.get('/urls', (request, response) => {
 });
 
 app.post('/urls', (request, response) => {
-  //response.send(request.body);
   let newKey = genRandomString();
   urlDatabase[newKey] = request.body.longURL;
   response.redirect(`/urls/${newKey}`);
@@ -46,7 +43,6 @@ app.get('/urls/new',(request, response) => {
 });
 
 app.get('/u/:shortURL', (request, response) => {
-  //get the given shortURL key to redirect to corresponding longURL value
   let longURL = urlDatabase[request.params.shortURL];
   response.redirect(longURL);
 });
@@ -60,6 +56,10 @@ app.get('/urls/:id', (request, response) => {
 });
 
 app.post('/urls/:id/delete', (request, response) => {
+  let urlToDelete = [request.params.id];
+  console.log('TEST: ', urlToDelete);
+  //delete urlToDelete;
+  delete urlDatabase.urlToDelete;
   response.redirect('/urls');
 });
 
