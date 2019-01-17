@@ -13,16 +13,16 @@ You will build an HTTP Server that handles requests from the browser (client). A
 
 ### Functional Requirements
 
-####User Stories
-As an avid twitter poster,
-I want to be able to shorten links,
-so that I can fit more non-link text in my tweets.
+#### User Stories
+As an avid twitter poster, </n>
+I want to be able to shorten links, </n>
+so that I can fit more non-link text in my tweets.</n>
 
-As a twitter reader,
-I want to be able to visit sites via shortened links,
-so that I can read interesting content.
+As a twitter reader,</n>
+I want to be able to visit sites via shortened links,</n>
+so that I can read interesting content.</n>
 
-## Expected Usage
+### Expected Usage
 
 The app will allow users to shorten long URLs much like TinyURL.com and bit.ly do.
 
