@@ -2,7 +2,7 @@ const PORT = 8080; // default port 8080
 //added randomString npm package for key generation found here: https://www.npmjs.com/package/randomstring
 const randomString = require("randomstring");
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const express = require('express');
 const app = express();
 
@@ -41,6 +41,10 @@ app.post('/urls', (request, response) => {
   urlDatabase[newKey] = request.body.longURL;
   response.redirect(`/urls/${newKey}`);
 });
+
+// app.post('/login', (request, response) => {
+
+// });
 
 app.get('/urls/new',(request, response) => {
   response.render('urls_new');
