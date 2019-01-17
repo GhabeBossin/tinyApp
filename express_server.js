@@ -60,11 +60,13 @@ app.get('/urls/:id', (request, response) => {
 });
 
 //frame for post response to UPDATE
-// app.post('/urls/:id', (request, response) => {
+app.post('/urls/:id/update', (request, response) => {
+  let updatedURL = request.params.id;
+  urlDatabase[updatedURL] = request.body.longURL;
+  response.redirect('/urls');
+});
 
-//   response.redirect('/urls');
-// });
-
+//on POST response (from delete input), delete URL and refresh page
 app.post('/urls/:id/delete', (request, response) => {
   let urlToDelete = request.params.id;
   //console.log('TEST: ', [urlToDelete]);

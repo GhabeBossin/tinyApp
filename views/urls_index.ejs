@@ -14,15 +14,23 @@
     <ul>
       <%for (let url in urls){%>
         <li>
-          <a href='#'><%=url%> : <%=urls[url]%></a>
+          <a href='#'>
+            <%=urls[url]%></a> ➡️ <a href='#'> http://<%=url%>
+          </a>
           <form method='POST' action='/urls/<%=url%>/delete'>
             <input type='submit' value=' Delete 🗑️ '>
           </form>
-          <a href='/urls/new'><input type='submit' value=' Edit ✏️ ' ></a>
+          <!--  edit button links to the urls_show for the respective page -->
+          <a href='/urls/<%= url %>'><input type='submit' value=' Edit ✏️ ' ></a>
         </li>
       <%}%>
     </ul>
 
+    <button><a href='urls/new'>Shorten a new URL</a></button>
+
   </body>
 
 </html>
+
+
+
