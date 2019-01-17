@@ -1,16 +1,14 @@
-
-const express = require('express');
-const app = express();
 const PORT = 8080; // default port 8080
-//added randomString npm package for key generation
+//added randomString npm package for key generation found here: https://www.npmjs.com/package/randomstring
 const randomString = require("randomstring");
 const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({extended: true}));
+const express = require('express');
+const app = express();
 
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true}));
 
 function genRandomString() {
-  //found package here: https://www.npmjs.com/package/randomstring
   const ranString = randomString.generate(6);
   return ranString;
 }
