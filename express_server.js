@@ -42,9 +42,17 @@ app.post('/urls', (request, response) => {
   response.redirect(`/urls/${newKey}`);
 });
 
-// app.post('/login', (request, response) => {
-
+// app.get('/login', (request, response) => {
+//   // Cookies that have not been signed
+//   console.log('Cookies: ', request.cookies);
+//   response.
 // });
+
+app.post('/login', (request, response) => {
+  //console.log(request.body.username);
+  response.cookie('username', request.body.username);
+  response.redirect('/urls');
+});
 
 app.get('/urls/new',(request, response) => {
   response.render('urls_new');
