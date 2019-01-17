@@ -6,10 +6,13 @@
   <header>
     <%include ./partials/_header %>
   </header>
-  <body>
+  <body style="font-size:20px; padding:50px;">
     <!-- Add your EJS code here -->
     <ul>
       <li><%=longURL%><stong> : </stong><%=shortURL%></li>
     </ul>
+
+    <button><a href='/urls/new'>Shorten a new URL</a></button>
+
   </body>
 </html>

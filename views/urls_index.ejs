@@ -7,13 +7,20 @@
     <%include ./partials/_header %>
   </header>
 
-  <body>
+  <body style="font-size:20px; padding:50px;">
     <!-- Add your EJS code here -->
     <ul>
       <%for (var url in urls){%>
-      <li><a href= '#'><%=url%> : <%=urls[url]%></a></li>
+        <li>
+          <a href= '#'><%=url%> : <%=urls[url]%></a>
+          <form method="POST" action="/urls/9sm5xK/delete">
+            <input type="submit" value="Delete">
+          </form>
+        </li>
       <%}%>
     </ul>
-  <a href= '#'>Shorten a new URL!</a>
+
+    <button><a href= '/urls/new'>Shorten a new URL</a></button>
+
   </body>
 </html>
