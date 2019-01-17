@@ -2,6 +2,7 @@
 const express = require('express');
 const app = express();
 const PORT = 8080; // default port 8080
+//added randomString npm package for key generation
 const randomString = require("randomstring");
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
@@ -14,9 +15,11 @@ function genRandomString() {
   return ranString;
 }
 
+
 const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
+  //dynamically generated keys from the genRandomString called in the /urls POST added here
 };
 
 app.get('/', (request, response) => {
@@ -32,6 +35,7 @@ app.get('/urls', (request, response) => {
   response.render('urls_index', templateVars);
 });
 
+//on POST generates new key and adds it to urlDatabase, then redirects to new URL based on key.
 app.post('/urls', (request, response) => {
   let newKey = genRandomString();
   urlDatabase[newKey] = request.body.longURL;
@@ -55,11 +59,16 @@ app.get('/urls/:id', (request, response) => {
   response.render('urls_show', templateVars);
 });
 
+//frame for post response to UPDATE
+// app.post('/urls/:id', (request, response) => {
+
+//   response.redirect('/urls');
+// });
+
 app.post('/urls/:id/delete', (request, response) => {
-  let urlToDelete = [request.params.id];
-  console.log('TEST: ', urlToDelete);
-  //delete urlToDelete;
-  delete urlDatabase.urlToDelete;
+  let urlToDelete = request.params.id;
+  //console.log('TEST: ', [urlToDelete]);
+  delete urlDatabase[urlToDelete];
   response.redirect('/urls');
 });
 
@@ -70,6 +79,8 @@ app.get('/hello', (request, response) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
 
 
 

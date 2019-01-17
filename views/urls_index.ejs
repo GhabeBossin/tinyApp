@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
   <head>
     <title>TinyApp</title>
@@ -9,21 +9,19 @@
     <%include ./partials/_header %>
   </header>
 
-  <body style="font-size:20px; padding:50px;">
+  <body style='font-size:20px; padding:50px;'>
     <!-- Add your EJS code here -->
     <ul>
       <%for (let url in urls){%>
         <li>
-          <a href= '#'><%=url%> : <%=urls[url]%></a>
-          <p>wooo</p>
-          <form method="POST" action=/urls/<%=url%>/delete>
-            <input type="submit" value=" Delete 🗑️ ">
+          <a href='#'><%=url%> : <%=urls[url]%></a>
+          <form method='POST' action='/urls/<%=url%>/delete'>
+            <input type='submit' value=' Delete 🗑️ '>
           </form>
+          <a href='/urls/new'><input type='submit' value=' Edit ✏️ ' ></a>
         </li>
       <%}%>
     </ul>
-
-    <button><a href= '/urls/new'>Shorten a new URL</a></button>
 
   </body>
 

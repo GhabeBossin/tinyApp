@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
   <head>
     <title>TinyApp</title>
@@ -9,10 +9,16 @@
     <%include ./partials/_header %>
   </header>
 
-  <body style="font-size:20px; padding:50px;">
+  <body style='font-size:20px; padding:50px;'>
     <!-- Add your EJS code here -->
     <ul>
-      <li><%=longURL%><stong> : </stong><%=shortURL%></li>
+      <li>
+          <%=longURL%><stong> : </stong><%=shortURL%>
+          <form method='POST' action='/urls/b2xVn2'>
+            <input id='longURL' type='text' name='longURL' placeholder='http://' style='width: 300px'>
+            <input type='submit' value=' Update 🖍️ '>
+          </form>
+      </li>
     </ul>
 
     <button><a href='/urls/new'>Shorten a new URL</a></button>
