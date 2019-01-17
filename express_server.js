@@ -2,23 +2,24 @@
 const express = require('express');
 const app = express();
 const PORT = 8080; // default port 8080
-const bodyParser = require('body-parser');
 const randomString = require("randomstring");
+const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
 
+function genRandomString() {
+  //found package here: https://www.npmjs.com/package/randomstring
+  const ranString = randomString.generate(6);
+  return ranString;
+}
+//genRandomString();
+
 const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
+  // add generated ranString as key, for longURL value submitted in <form></form>
 };
-
-function generateRandomString() {
-  //found package here: https://www.npmjs.com/package/randomstring
-  const string = randomString.generate(6);
-  return string;
-}
-generateRandomString();
 
 app.get('/', (request, response) => {
   response.send('Hello!');
@@ -34,12 +35,20 @@ app.get('/urls', (request, response) => {
 });
 
 app.post('/urls', (request, response) => {
-  console.log(request.body);
-  response.send('OK');
+  //response.send(request.body);
+  let newKey = genRandomString();
+  urlDatabase[newKey] = request.body.longURL;
+  response.redirect(`/urls/${newKey}`);
 });
 
 app.get('/urls/new',(request, response) => {
   response.render('urls_new');
+});
+
+app.get('/u/:shortURL', (request, response) => {
+  //get the given shortURL key to redirect to corresponding longURL value
+  let longURL = urlDatabase[request.params.shortURL];
+  response.redirect(longURL);
 });
 
 app.get('/urls/:id', (request, response) => {
