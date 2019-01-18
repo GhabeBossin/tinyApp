@@ -1,0 +1,10 @@
+<!-- views/partials/_username.ejs -->
+
+<!-- if user is logged in, show user_id and logout button, else show login form-->
+<% if(user_id) { %>
+  <p>Hello, <%= user_id %>
+    <form action='/logout' method='POST'>
+      <input type='submit' value=' Logout 💻 '>
+    </form>
+  </p>
+<% } %>

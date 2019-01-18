@@ -49,7 +49,7 @@ app.get('/urls.json', (request, response) => {
 app.get('/urls', (request, response) => {
   let templateVars = {
     urls: urlDatabase,
-    username: request.cookies['username']
+    user_id: request.cookies['user_id']
   };
   response.render('urls_index', templateVars);
 });
@@ -62,32 +62,66 @@ app.get('/register', (request, response) => {
 
 //on POST from /register, stores email and password inputs.
 app.post('/register', (request, response) => {
-  let genId = genRandomString(14);
-  userData[genId] = {
-    id: genId,
-    email: request.body.email,
-    password: request.body.password
-    };
+  let genID = genRandomString(14);
+  let userKeys = Object.keys(userData);
+
+  if(request.body.email && request.body.password) {
+    let matched = false;
+    for(let key of userKeys) {
+      if(userData[key].email === request.body.email) {
+        response.status(400);
+        response.send('THIEF : ' + 400);
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) {
+      userData[genID] = {
+        id: genID,
+        email: request.body.email,
+        password: request.body.password
+      };
+      response.status('200');
+      response.cookie('user_id', genID);
+      response.redirect('/urls');
+    }
+  } else {
+    response.status(400);
+    response.send('You shall not pass! : ' + 400);
+  }
+  //if that email already exists in userData, cannot register again with that email.
+  // if (email [alredy exists], err)
+  /////// NOT IN USE
+  // console.log('Testing:', request.body);
+  //console.log('Test uD Val: ', userData[genID].password);
+  // if(userData[genID].email == '' || userData[genID].password == '') {
+  //   response.status(400);
+  //   response.send('You shall not pass! : ' + 400);
+  // }
+
   // console.log(request.body.email);
   // console.log(request.body.password);
-  //console.log('TESTING!!!!!!!:', genId);
-  //console.log(userData);
-  //console.log('user_id', genId);
-  response.cookie('user_id', genId);
+  // console.log(userData);
+  // console.log('user_id', genID);
+
+});
+
+app.post('/login', (request, response) => {
+  
   response.redirect('/urls');
 });
 
-//on POST from _header form login, creates cookie storing username input
+//on POST from _header form login, creates cookie storing user_id input
 app.post('/login', (request, response) => {
-  //console.log(request.body.username);
-  response.cookie('username', request.body.username);
+  //console.log(request.body.user_id);
+  response.cookie('user_id', request.body.user_id);
   response.redirect('/urls');
 });
 
 //on POST from _header form logout, clearCookies and logout
 app.post('/logout', (request, response) => {
-  //console.log(request.body.username);
-  response.clearCookie('username', request.body.username);
+  //console.log(request.body.user_id);
+  response.clearCookie('user_id', request.body.user_id);
   response.redirect('/urls');
 });
 
@@ -102,7 +136,7 @@ app.post('/urls', (request, response) => {
 
 app.get('/urls/new',(request, response) => {
   let templateVars = {
-    username: request.cookies['username']
+    user_id: request.cookies['user_id']
   };
   response.render('urls_new', templateVars);
 });
@@ -116,7 +150,7 @@ app.get('/urls/:id', (request, response) => {
   let templateVars = {
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id],
-    username: request.cookies['username']
+    user_id: request.cookies['user_id']
   };
   response.render('urls_show', templateVars);
 });
