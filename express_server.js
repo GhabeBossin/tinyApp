@@ -39,9 +39,17 @@ app.get('/urls', (request, response) => {
 });
 
 app.post('/login', (request, response) => {
+  console.log(request.body.username);
   response.cookie('username', request.body.username);
   response.redirect('/urls');
 });
+
+app.post('/logout', (request, response) => {
+  console.log(request.body.username);
+  response.clearCookie('username', request.body.username);
+  response.redirect('/urls');
+});
+
 //on POST generates new key and adds it to urlDatabase, then redirects to new URL based on key.
 app.post('/urls', (request, response) => {
   let newKey = genRandomString();
