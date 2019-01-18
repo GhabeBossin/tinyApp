@@ -1,2 +1,23 @@
 <!-- views/partials/_header.ejs -->
 <h1>TinyApp</h1>
+
+<% if(!user_id){ %>
+    <a href='/register'>
+    <input type='submit' value=' Register 👋 '>
+    </a>
+    <a href='/login'>
+    <input type='submit' value=' Login 💻 '>
+    </a>
+  <% } else{ %>
+    <p>Hello, <%= user_id %>
+    <form action='/logout' method='POST'>
+      <input type='submit' value=' Logout 💻 '>
+    </form>
+  </p>
+<% } %>
+
+
+
+
+
+

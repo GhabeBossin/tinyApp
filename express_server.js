@@ -39,7 +39,7 @@ const urlDatabase = {
 };
 
 app.get('/', (request, response) => {
-  response.send('Hello!');
+  response.send('Hello');
 });
 
 app.get('/urls.json', (request, response) => {
@@ -57,10 +57,13 @@ app.get('/urls', (request, response) => {
 //creates registration page
 app.get('/register', (request, response) => {
   //console.log('WOO');
-  response.render('urls_register');
+  let templateVars = {
+    user_id: request.cookies['user_id']
+  };
+  response.render('urls_register', templateVars);
 });
 
-//on POST from /register, stores email and password inputs.
+//on POST from /register, stores email and password inputs, and 
 app.post('/register', (request, response) => {
   let genID = genRandomString(14);
   let userKeys = Object.keys(userData);
@@ -89,47 +92,51 @@ app.post('/register', (request, response) => {
     response.status(400);
     response.send('You shall not pass! : ' + 400);
   }
-  //if that email already exists in userData, cannot register again with that email.
-  // if (email [alredy exists], err)
-  /////// NOT IN USE
-  // console.log('Testing:', request.body);
-  //console.log('Test uD Val: ', userData[genID].password);
-  // if(userData[genID].email == '' || userData[genID].password == '') {
-  //   response.status(400);
-  //   response.send('You shall not pass! : ' + 400);
-  // }
-
-  // console.log(request.body.email);
-  // console.log(request.body.password);
-  // console.log(userData);
-  // console.log('user_id', genID);
-
 });
 
-app.post('/login', (request, response) => {
-  
-  response.redirect('/urls');
+app.get('/login', (request, response) => {
+  let templateVars = {
+    //email: request.cookies['email'],
+    user_id: request.cookies['user_id']
+  };
+  response.render('urls_login', templateVars);
 });
+
+
+
+function getCurrentUser(email, password) {
+  for (let key in userData) {
+    if (userData[key].email === email) {
+      if (userData[key].password === password) {
+        return userData[key];
+      }
+    }
+  }
+  return null;
+}
+
 
 //on POST from _header form login, creates cookie storing user_id input
 app.post('/login', (request, response) => {
-  //console.log(request.body.user_id);
-  response.cookie('user_id', request.body.user_id);
-  response.redirect('/urls');
+  const { email, password } = request.body;
+  const currentUser = getCurrentUser(email, password);
+  if (!currentUser) {
+    response.status(403);
+  }
+  response.cookie('user_id', currentUser.id);
+  response.redirect('/');
 });
 
 //on POST from _header form logout, clearCookies and logout
 app.post('/logout', (request, response) => {
   //console.log(request.body.user_id);
-  response.clearCookie('user_id', request.body.user_id);
+  response.clearCookie('user_id'); ////later
   response.redirect('/urls');
 });
 
 //on POST generates new key and adds it to urlDatabase, then redirects to new URL based on key
 app.post('/urls', (request, response) => {
   let newKey = genRandomString(6);
-  //console.log(newKey);
-  //console.log(urlDatabase);
   urlDatabase[newKey] = request.body.longURL;
   response.redirect(`/urls/${newKey}`);
 });
