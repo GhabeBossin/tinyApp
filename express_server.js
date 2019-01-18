@@ -1,6 +1,6 @@
 const PORT = 8080; // default port 8080
 //added randomString npm package for key generation found here: https://www.npmjs.com/package/randomstring
-const randomString = require("randomstring");
+const randomString = require('randomstring');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
@@ -31,10 +31,17 @@ app.get('/urls.json', (request, response) => {
 });
 
 app.get('/urls', (request, response) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {
+    urls: urlDatabase,
+    username: request.cookies['username']
+  };
   response.render('urls_index', templateVars);
 });
 
+app.post('/login', (request, response) => {
+  response.cookie('username', request.body.username);
+  response.redirect('/urls');
+});
 //on POST generates new key and adds it to urlDatabase, then redirects to new URL based on key.
 app.post('/urls', (request, response) => {
   let newKey = genRandomString();
@@ -43,19 +50,16 @@ app.post('/urls', (request, response) => {
 });
 
 // app.get('/login', (request, response) => {
-//   // Cookies that have not been signed
-//   console.log('Cookies: ', request.cookies);
-//   response.
+//   // Cookies that have not been signed\
+//   let templateVars = { urls: urlDatabase };
+//   response.render('/urls_login', templateVars);
 // });
 
-app.post('/login', (request, response) => {
-  //console.log(request.body.username);
-  response.cookie('username', request.body.username);
-  response.redirect('/urls');
-});
-
 app.get('/urls/new',(request, response) => {
-  response.render('urls_new');
+  let templateVars = {
+    username: request.cookies['username']
+  };
+  response.render('urls_new', templateVars);
 });
 
 app.get('/u/:shortURL', (request, response) => {
@@ -66,7 +70,8 @@ app.get('/u/:shortURL', (request, response) => {
 app.get('/urls/:id', (request, response) => {
   let templateVars = {
     shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id]
+    longURL: urlDatabase[request.params.id],
+    username: request.cookies['username']
   };
   response.render('urls_show', templateVars);
 });
@@ -81,7 +86,6 @@ app.post('/urls/:id/update', (request, response) => {
 //on POST response (from delete input), delete URL and refresh page
 app.post('/urls/:id/delete', (request, response) => {
   let urlToDelete = request.params.id;
-  //console.log('TEST: ', [urlToDelete]);
   delete urlDatabase[urlToDelete];
   response.redirect('/urls');
 });
