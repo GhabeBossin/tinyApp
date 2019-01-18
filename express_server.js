@@ -14,11 +14,10 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 
 //generates random 6 character alphanumberic string
-function genRandomString() {
-  const ranString = randomString.generate(6);
+function genRandomString(num) {
+  const ranString = randomString.generate(num);
   return ranString;
 }
-
 
 const userData = {
   'userRandomID': {
@@ -63,33 +62,40 @@ app.get('/register', (request, response) => {
 
 //on POST from /register, stores email and password inputs.
 app.post('/register', (request, response) => {
-  //let userEmail = request.body.email;
-  //let userPass = request.body.password;
-
-  console.log()
-  console.log(request.body.email);
-  console.log(request.body.password);
-  console.log(userData);
+  let genId = genRandomString(14);
+  userData[genId] = {
+    id: genId,
+    email: request.body.email,
+    password: request.body.password
+    };
+  // console.log(request.body.email);
+  // console.log(request.body.password);
+  //console.log('TESTING!!!!!!!:', genId);
+  //console.log(userData);
+  //console.log('user_id', genId);
+  response.cookie('user_id', genId);
   response.redirect('/urls');
 });
 
 //on POST from _header form login, creates cookie storing username input
 app.post('/login', (request, response) => {
-  console.log(request.body.username);
+  //console.log(request.body.username);
   response.cookie('username', request.body.username);
   response.redirect('/urls');
 });
 
 //on POST from _header form logout, clearCookies and logout
 app.post('/logout', (request, response) => {
-  console.log(request.body.username);
+  //console.log(request.body.username);
   response.clearCookie('username', request.body.username);
   response.redirect('/urls');
 });
 
 //on POST generates new key and adds it to urlDatabase, then redirects to new URL based on key
 app.post('/urls', (request, response) => {
-  let newKey = genRandomString();
+  let newKey = genRandomString(6);
+  //console.log(newKey);
+  //console.log(urlDatabase);
   urlDatabase[newKey] = request.body.longURL;
   response.redirect(`/urls/${newKey}`);
 });
