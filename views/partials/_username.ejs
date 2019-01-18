@@ -1,0 +1,17 @@
+<!-- views/partials/_username.ejs -->
+
+<!-- if user is logged in, show username and logout button, else show login form-->
+<% if(username) { %>
+  <p>Hello, <%= username %>
+    <form action='/logout' method='POST'>
+      <input type='submit' value=' Logout 💻 '>
+    </form>
+  </p>
+  <% } else { %>
+    <form action='/login' method='POST'>
+      <label for='user'>Enter a Username:</label>
+      <input id='user' type='text' name='username' placeholder='username' style='width: 300px'>
+      <input type='submit' value=' Login 💻 '>
+    </form>
+<% } %>
+

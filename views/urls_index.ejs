@@ -1,35 +1,36 @@
 <!DOCTYPE html>
-<html lang='en'>
+  <html lang='en'>
 
-  <head>
-    <title>TinyApp</title>
-  </head>
+    <head>
+      <title>TinyApp</title>
+    </head>
 
-  <header>
-    <%include ./partials/_header %>
-  </header>
+    <header>
+      <%include ./partials/_header %>
+      <%include ./partials/_username %>
+    </header>
 
-  <body style='font-size:20px; padding:50px;'>
-    <!-- Add your EJS code here -->
-    <ul>
-      <%for (let url in urls){%>
-        <li>
-          <a href='#'>
-            <%=urls[url]%></a> ➡️ <a href='#'> http://<%=url%>
-          </a>
-          <form method='POST' action='/urls/<%=url%>/delete'>
-            <input type='submit' value=' Delete 🗑️ '>
-          </form>
-          <a href='/urls/<%= url %>'><input type='submit' value=' Edit ✏️ ' ></a>
-        </li>
-      <%}%>
-    </ul>
+    <body style='font-size:20px; padding:50px;'>
+      <!-- Add your EJS code here -->
+      <ul>
+        <%for (let url in urls){%>
+          <li>
+            <a href='#'>
+              <%=urls[url]%></a> ➡️ <a href='#'> http://<%=url%>
+            </a>
+            <form method='POST' action='/urls/<%=url%>/delete'>
+              <input type='submit' value=' Delete 🗑️ '>
+            </form>
+            <a href='/urls/<%= url %>'><input type='submit' value=' Edit ✏️ ' ></a>
+          </li>
+        <%}%>
+      </ul>
 
-    <button><a href='urls/new'>Shorten a new URL</a></button>
+      <button><a href='urls/new'>Shorten a new URL</a></button>
 
-  </body>
+    </body>
 
-</html>
+  </html>
 
 
 

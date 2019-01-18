@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+  <html lang='en'>
+
+    <head>
+      <title>TinyApp</title>
+    </head>
+
+    <header>
+      <%include ./partials/_header %>
+    </header>
+
+    <body>
+
+      <form action='/register' method='POST'>
+        <label for='email'>Enter your e-mail: </label>
+        <input id='email' type='email' name='email' placeholder='e-mail' style='width: 300px'>
+        
+        <label for='password'>Create a password: </label>
+        <input id='password' type='password' name='password' placeholder='e-mail' style='width: 300px'>
+        <input type='submit' value=' Register 👋 '>
+      </form>
+
+    </body>
+
+  </html>

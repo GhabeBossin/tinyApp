@@ -41,10 +41,17 @@ app.get('/urls', (request, response) => {
   response.render('urls_index', templateVars);
 });
 
+//creates registration page
+app.get('/register', (request, response) => {
+  //console.log('WOO');
+  response.render('urls_register');
+});
 
-app.get('/register', (request, parameter) => {
-
-  response.render('/urls_register');
+//on POST from /register, stores email and password inputs.
+app.post('/register', (request, response) => {
+  console.log(request.body.email);
+  console.log(request.body.password);
+  //response.redirect('/urls');
 });
 
 //on POST from _header form login, creates cookie storing username input
