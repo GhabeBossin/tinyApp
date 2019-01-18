@@ -19,6 +19,20 @@ function genRandomString() {
   return ranString;
 }
 
+
+const userData = {
+  'userRandomID': {
+    id: 'userRandomID',
+    email: 'user@example.com',
+    password: 'purple-monkey-dinosaur'
+  },
+  'user2RandomID': {
+    id: 'user2RandomID',
+    email: 'user2@example.com',
+    password: 'dishwasher-funk'
+  }
+};
+
 const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
@@ -49,9 +63,14 @@ app.get('/register', (request, response) => {
 
 //on POST from /register, stores email and password inputs.
 app.post('/register', (request, response) => {
+  //let userEmail = request.body.email;
+  //let userPass = request.body.password;
+
+  console.log()
   console.log(request.body.email);
   console.log(request.body.password);
-  //response.redirect('/urls');
+  console.log(userData);
+  response.redirect('/urls');
 });
 
 //on POST from _header form login, creates cookie storing username input
