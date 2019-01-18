@@ -41,6 +41,12 @@ app.get('/urls', (request, response) => {
   response.render('urls_index', templateVars);
 });
 
+
+app.get('/register', (request, parameter) => {
+
+  response.render('/urls_register');
+});
+
 //on POST from _header form login, creates cookie storing username input
 app.post('/login', (request, response) => {
   console.log(request.body.username);
