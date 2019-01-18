@@ -12,11 +12,11 @@
   <body style='font-size:20px; padding:50px;'>
     <!-- Add your EJS code here -->
 
-          <%=longURL%> ➡️ <%=shortURL%>
-          <form method='POST' action='/urls/<%= shortURL %>/update'>
-            <input id='longURL' type='text' name='longURL' placeholder='http://' style='width: 300px'>
-            <input type='submit' value=' Update 🖍️ '>
-          </form>
+      <%=longURL%> ➡️ <%=shortURL%>
+      <form method='POST' action='/urls/<%= shortURL %>/update'>
+        <input id='longURL' type='text' name='longURL' placeholder='http://' style='width: 300px'>
+        <input type='submit' value=' Update 🖍️ '>
+      </form>
 
 
     <button><a href='/urls/new'>Shorten a new URL</a></button>
