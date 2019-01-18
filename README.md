@@ -1,4 +1,4 @@
-# TinyApp
+# TinyApp - by Ghabe Bossin
 
 <!---...(aka make links smol)-->
 This is the first solo project in the Lighthouse Labs Web Developer bootcamp.
@@ -27,4 +27,8 @@ so that I can read interesting content.
 
 The app will allow users to shorten long URLs much like TinyURL.com and bit.ly do.
 
-##### -by Ghabe Bossin
+##### Personal Notes
+
+* I used an npm package for key generation found here (randomString):
+      <https://www.npmjs.com/package/randomstring>
+
