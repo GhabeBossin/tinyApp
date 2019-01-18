@@ -1,4 +1,7 @@
-const PORT = 8080; // default port 8080
+//TinyApp by Ghabe Bossin
+
+// default port 8080
+const PORT = 8080;
 //added randomString npm package for key generation found here: https://www.npmjs.com/package/randomstring
 const randomString = require('randomstring');
 const bodyParser = require('body-parser');
@@ -10,11 +13,11 @@ app.set('view engine', 'ejs');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 
+//generates random 6 character alphanumberic string
 function genRandomString() {
   const ranString = randomString.generate(6);
   return ranString;
 }
-
 
 const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
@@ -38,30 +41,26 @@ app.get('/urls', (request, response) => {
   response.render('urls_index', templateVars);
 });
 
+//on POST from _header form login, creates cookie storing username input
 app.post('/login', (request, response) => {
   console.log(request.body.username);
   response.cookie('username', request.body.username);
   response.redirect('/urls');
 });
 
+//on POST from _header form logout, clearCookies and logout
 app.post('/logout', (request, response) => {
   console.log(request.body.username);
   response.clearCookie('username', request.body.username);
   response.redirect('/urls');
 });
 
-//on POST generates new key and adds it to urlDatabase, then redirects to new URL based on key.
+//on POST generates new key and adds it to urlDatabase, then redirects to new URL based on key
 app.post('/urls', (request, response) => {
   let newKey = genRandomString();
   urlDatabase[newKey] = request.body.longURL;
   response.redirect(`/urls/${newKey}`);
 });
-
-// app.get('/login', (request, response) => {
-//   // Cookies that have not been signed\
-//   let templateVars = { urls: urlDatabase };
-//   response.render('/urls_login', templateVars);
-// });
 
 app.get('/urls/new',(request, response) => {
   let templateVars = {
@@ -84,7 +83,7 @@ app.get('/urls/:id', (request, response) => {
   response.render('urls_show', templateVars);
 });
 
-//frame for post response to UPDATE
+//POST response to update/edit existing URLs
 app.post('/urls/:id/update', (request, response) => {
   let updatedURL = request.params.id;
   urlDatabase[updatedURL] = request.body.longURL;
