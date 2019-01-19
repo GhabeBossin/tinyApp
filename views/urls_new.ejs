@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang='en'>
+  <html lang='en'>
 
-  <head>
-    <title>TinyApp</title>
-  </head>
+    <head>
+      <title>TinyApp</title>
+    </head>
 
-  <header>
-    <%include ./partials/_header %>
-  </header>
+    <header>
+      <%include ./partials/_header %>
+    </header>
 
-  <body style='font-size:20px; padding:50px;'>
+    <body style='font-size:20px; padding:50px;'>
 
-    <form action='/urls' method='POST'>
-      <label for='longURL'>Enter a URL:</label>
-      <input id='longURL' type='text' name='longURL' placeholder='http://' style='width: 300px'>
-      <input type='submit' value=' Submit ✉️ '>
-    </form>
+      <form action='/urls' method='POST'>
+        <label for='longURL'>Enter a URL:</label>
+        <input id='longURL' type='text' name='longURL' placeholder='http://' style='width: 300px'>
+        <input type='submit' value=' Submit ✉️ '>
+      </form>
 
-    <button><a href='/urls'>My short URLs</a></button>
+      <button><a href='/urls'>My short URLs</a></button>
 
-  </body>
+    </body>
 
-</html>
+  </html>

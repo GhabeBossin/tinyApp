@@ -4,6 +4,9 @@
 const PORT = 8080;
 //added randomString npm package for key generation found here: https://www.npmjs.com/package/randomstring
 const randomString = require('randomstring');
+const bcrypt = require('bcrypt');
+//const bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword);
+//const hashedPassword = bcrypt.hashSync(request.body.password, 10);
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
@@ -47,7 +50,7 @@ function genRandomString(num) {
 function getCurrentUser(email, password) {
   for (let key in userData) {
     if (userData[key].email === email) {
-      if (userData[key].password === password) {
+      if (bcrypt.compareSync(password, userData[key].password)) {
         return userData[key];
       }
     }
@@ -73,14 +76,6 @@ app.get('/urls.json', (request, response) => {
   response.json(urlDatabase);
 });
 
-app.get('/urls', (request, response) => {
-  let templateVars = {
-    urls: urlsForUser(request.cookies['user_id']),
-    user_id: request.cookies['user_id']
-  };
-  response.render('urls_index', templateVars);
-});
-
 app.get('/register', (request, response) => {
   let templateVars = {
     user_id: request.cookies['user_id']
@@ -88,17 +83,17 @@ app.get('/register', (request, response) => {
   response.render('urls_register', templateVars);
 });
 
-//on POST from /register, stores email and password inputs, and
+//on POST from /register, stores email and password inputs, and generates id
 app.post('/register', (request, response) => {
   let genID = genRandomString(14);
   let userKeys = Object.keys(userData);
 
-  if(request.body.email && request.body.password) {
+  if (request.body.email && request.body.password) {
     let matched = false;
-    for(let key of userKeys) {
-      if(userData[key].email === request.body.email) {
+    for (let key of userKeys) {
+      if (userData[key].email === request.body.email) {
         response.status(400);
-        response.send('THIEF : ' + 400);
+        response.send('The thieves. The thieves. The filthy little thieves!: This email is belongs to an already registered account! <a href="/register">Try again with a different email.</a>');
         matched = true;
         break;
       }
@@ -107,7 +102,7 @@ app.post('/register', (request, response) => {
       userData[genID] = {
         id: genID,
         email: request.body.email,
-        password: request.body.password
+        password: bcrypt.hashSync(request.body.password, 10)
       };
       response.status('200');
       response.cookie('user_id', genID);
@@ -115,7 +110,7 @@ app.post('/register', (request, response) => {
     }
   } else {
     response.status(400);
-    response.send('You shall not pass! : ' + 400);
+    response.send('You shall not pass!: You must <a href="/register">enter both a valid email and password</a> to register.');
   }
 });
 
@@ -132,38 +127,44 @@ app.post('/login', (request, response) => {
   const currentUser = getCurrentUser(email, password);
   if (!currentUser) {
     response.status(403);
+    response.send('Speak "friend", and enter: You must enter the <a href="/login">correct email and password</a> to proceed.');
   }
-  response.cookie('user_id', currentUser);
+  // console.log(currentUser);
+  response.cookie('user_id', currentUser.id);
   response.redirect('/urls');
 });
 
 //on POST from _header form logout, clearCookies and logout
 app.post('/logout', (request, response) => {
-  //console.log(request.body.user_id);
-  response.clearCookie('user_id'); ////later
+  response.clearCookie('user_id');
   response.redirect('/urls');
+});
+
+app.get('/urls', (request, response) => {
+  let templateVars = {
+    urls: urlsForUser(request.cookies['user_id']),
+    user_id: request.cookies['user_id']
+  };
+  response.render('urls_index', templateVars);
 });
 
 //on POST generates new key and adds it to urlDatabase, then redirects to new URL based on key
 app.post('/urls', (request, response) => {
   let newKey = genRandomString(6);
-
-
   urlDatabase[newKey] = {
     longURL: request.body.longURL,
     userID: request.cookies['user_id']
-  }
+  };
   response.redirect(`/urls/${newKey}`);
 });
-
-
 
 app.get('/urls/new',(request, response) => {
   let templateVars = {
     user_id: request.cookies['user_id']
   };
-  if(!request.cookies['user_id']) {
-    response.redirect('/login');
+  if (!request.cookies['user_id']) {
+    response.send('There lies our hope, if hope it be: You must be logged in to shorten a new URL! Please <a href="/login">login</a> or <a href="/register">register.</a>');
+    //response.redirect('/login');
   } else {
     response.render('urls_new', templateVars);
   }
@@ -182,8 +183,9 @@ app.get('/urls/:id', (request, response) => {
   };
   if (request.cookies['user_id']) {
     response.render('urls_show', templateVars);
+  } else {
+    response.send('Naughty little fly: You do not have permission to edit this!');
   }
-  response.send('NO TOUCHY');
 });
 
 //POST response to update/edit existing URLs
@@ -202,8 +204,9 @@ app.post('/urls/:id/delete', (request, response) => {
   let urlToDelete = request.params.id;
   delete urlDatabase[urlToDelete];
   response.redirect('/urls');
+  } else {
+    response.send('Wicked. Tricksy. False: This is not yours to delete!');
   }
-  response.send('NO TOUCHY');
 });
 
 app.get('/hello', (request, response) => {
