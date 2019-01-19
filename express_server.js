@@ -13,12 +13,6 @@ app.set('view engine', 'ejs');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 
-//generates random 6 character alphanumberic string
-function genRandomString(num) {
-  const ranString = randomString.generate(num);
-  return ranString;
-}
-
 const userData = {
   'userRandomID': {
     id: 'userRandomID',
@@ -38,6 +32,23 @@ const urlDatabase = {
   //dynamically generated keys from the genRandomString called in the /urls POST added here
 };
 
+//generates random 6 character alphanumberic string
+function genRandomString(num) {
+  const ranString = randomString.generate(num);
+  return ranString;
+}
+
+function getCurrentUser(email, password) {
+  for (let key in userData) {
+    if (userData[key].email === email) {
+      if (userData[key].password === password) {
+        return userData[key];
+      }
+    }
+  }
+  return null;
+}
+
 app.get('/', (request, response) => {
   response.send('Hello');
 });
@@ -54,9 +65,7 @@ app.get('/urls', (request, response) => {
   response.render('urls_index', templateVars);
 });
 
-//creates registration page
 app.get('/register', (request, response) => {
-  //console.log('WOO');
   let templateVars = {
     user_id: request.cookies['user_id']
   };
@@ -96,25 +105,10 @@ app.post('/register', (request, response) => {
 
 app.get('/login', (request, response) => {
   let templateVars = {
-    //email: request.cookies['email'],
     user_id: request.cookies['user_id']
   };
   response.render('urls_login', templateVars);
 });
-
-
-
-function getCurrentUser(email, password) {
-  for (let key in userData) {
-    if (userData[key].email === email) {
-      if (userData[key].password === password) {
-        return userData[key];
-      }
-    }
-  }
-  return null;
-}
-
 
 //on POST from _header form login, creates cookie storing user_id input
 app.post('/login', (request, response) => {
@@ -145,7 +139,11 @@ app.get('/urls/new',(request, response) => {
   let templateVars = {
     user_id: request.cookies['user_id']
   };
-  response.render('urls_new', templateVars);
+  if(!request.cookies['user_id']) {
+    response.redirect('/login');
+  } else {
+    response.render('urls_new', templateVars);
+  }
 });
 
 app.get('/u/:shortURL', (request, response) => {
