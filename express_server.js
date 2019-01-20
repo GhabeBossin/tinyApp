@@ -43,7 +43,7 @@ const urlDatabase = {
   '9sm5xK': {
     longURL: 'http://www.google.com',
     userID: 'user2RandomID'
-    }
+  }
 };
 
 // v---- FUNCTIONS ----v
@@ -54,7 +54,6 @@ function genRandomString(num) {
   return ranString;
 }
 
-//
 function getCurrentUser(email, password) {
   for (let key in userData) {
     if (userData[key].email === email) {
@@ -82,7 +81,7 @@ app.get('/', (request, response) => {
   if (request.session.user_id) {
     response.redirect('/urls');
   } else {
-    response.redirect('/login')
+    response.redirect('/login');
   }
 });
 
@@ -93,13 +92,17 @@ app.get('/urls.json', (request, response) => {
 // v---- REGISTRATION ----v
 
 app.get('/register', (request, response) => {
-  let templateVars = {
-    user_id: request.session.user_id
-  };
+  // let user_id = request.session.user_id;
+  if (!request.session.user_id) {
+    //maybe remove later?
+    // let templateVars = {
+    //   user_id: request.session.user_id,
+    //   email: userData[request.session.user_id].email
+    // };
+    response.render('urls_register', { user_id: false });
+  }
   if (request.session.user_id) {
     response.redirect('/urls');
-  } else {
-  response.render('urls_register', templateVars);
   }
 });
 
@@ -137,14 +140,18 @@ app.post('/register', (request, response) => {
 // v---- LOGIN/OUT ----v
 
 app.get('/login', (request, response) => {
-  let templateVars = {
-    user_id: request.session.user_id
-  };
+  if (!request.session.user_id) {
+    // let templateVars = {
+    //   user_id: request.session.user_id,
+    //   email: userData[request.session.user_id].email
+    // };
+    response.render('urls_login', { user_id: false });
+  }
   if (request.session.user_id) {
     response.redirect('/urls');
   }
-  response.render('urls_login', templateVars);
 });
+// response.render('urls_login', templateVars);
 
 //on POST from _header form login, creates cookie storing user_id input
 app.post('/login', (request, response) => {
@@ -166,19 +173,30 @@ app.post('/logout', (request, response) => {
 
 // v---- URLS ----v
 
+//possible refactoring example
 app.get('/urls', (request, response) => {
-  let templateVars = {
-    urls: urlsForUser(request.session.user_id),
-    user_id: request.session.user_id
-  };
-  response.render('urls_index', templateVars);
+  if (request.session.user_id) {
+    let user_id = request.session.user_id;
+    let templateVars = {
+      urls: urlsForUser(user_id),
+      user_id: request.session.user_id,
+      email: userData[user_id].email
+    };
+    response.render('urls_index', templateVars);
+  }
+  if (!request.session.user_id) {
+    response.send('Keep it secret... keep it safe: You must be <a href="/login">logged in</a> to view your URLs.');
+  }
 });
 
 //on POST generates new key and adds it to urlDatabase, then redirects based on key
 app.post('/urls', (request, response) => {
   let newKey = genRandomString(6);
+
+  let longURL = request.body.longURL.includes('http') ? request.body.longURL : `http://${request.body.longURL}`;
+
   urlDatabase[newKey] = {
-    longURL: request.body.longURL,
+    longURL: longURL,
     userID: request.session.user_id
   };
   response.redirect(`/urls/${newKey}`);
@@ -187,28 +205,31 @@ app.post('/urls', (request, response) => {
 // v- URLS/new -v
 //creation page for short URLs
 app.get('/urls/new',(request, response) => {
-  let templateVars = {
-    user_id: request.session.user_id
-  };
+  if (request.session.user_id) {
+    let templateVars = {
+      user_id: request.session.user_id,
+      email: userData[request.session.user_id].email
+    };
+    response.render('urls_new', templateVars);
+  }
   if (!request.session.user_id) {
     response.send('There lies our hope, if hope it be: You must be logged in to shorten a new URL! Please <a href="/login">login</a> or <a href="/register">register.</a>');
-    //response.redirect('/login');
-  } else {
-    response.render('urls_new', templateVars);
   }
 });
 
 // v- URLS/id -v
 
 app.get('/urls/:id', (request, response) => {
-  let templateVars = {
-    shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id].longURL,
-    user_id: request.session.user_id
-  };
-  if (request.session.user_id) {
+  if (request.session.user_id){
+    let templateVars = {
+      shortURL: request.params.id,
+      longURL: urlDatabase[request.params.id].longURL,
+      user_id: request.session.user_id,
+      email: userData[request.session.user_id].email
+    };
     response.render('urls_show', templateVars);
-  } else {
+  }
+  if (!request.session.user_id) {
     response.send('Naughty little fly: You do not have permission to edit this!');
   }
 });
@@ -218,7 +239,7 @@ app.post('/urls/:id/update', (request, response) => {
   let updatedURL = request.params.id;
   urlDatabase[updatedURL] = {
     longURL: request.body.longURL,
-    userID: request.session.user_id
+    userID: request.session.user_id,
   };
   response.redirect('/urls');
 });
@@ -237,11 +258,8 @@ app.post('/urls/:id/delete', (request, response) => {
 // v---- U/:shortURL ----v
 
 app.get('/u/:shortURL', (request, response) => {
- // console.log('TEST', urlDatabase);
- // console.log('TEST1', urlDatabase[request.params.shortURL]);
- //BUGGED ------v----- cannot find proper key (should be the generated shortURL)
-  if (!urlDatabase[request.params.shortURL].longURL) {
-    console.log('TEST SHORTURL', urlDatabase[request.params.shortURL].longURL);
+
+  if (!urlDatabase.hasOwnProperty(request.params.shortURL)) {
     response.send('For even the very wise cannot see all ends: We have no record of this shortened URL');
   } else {
     let longURL = urlDatabase[request.params.shortURL].longURL;
@@ -249,9 +267,9 @@ app.get('/u/:shortURL', (request, response) => {
   }
 });
 
-app.get('/hello', (request, response) => {
-  response.send('<html><body>Hello <b>World</b></body></html>\n');
-});
+// app.get('/hello', (request, response) => {
+//   response.send('<html><body>Hello <b>World</b></body></html>\n');
+// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
