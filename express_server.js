@@ -8,12 +8,15 @@ const bcrypt = require('bcrypt');
 //const bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword);
 //const hashedPassword = bcrypt.hashSync(request.body.password, 10);
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const express = require('express');
 const app = express();
 
 app.set('view engine', 'ejs');
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['One', 'Ring']
+}));
 app.use(bodyParser.urlencoded({extended: true}));
 
 const userData = {
@@ -78,7 +81,7 @@ app.get('/urls.json', (request, response) => {
 
 app.get('/register', (request, response) => {
   let templateVars = {
-    user_id: request.cookies['user_id']
+    user_id: request.session.user_id
   };
   response.render('urls_register', templateVars);
 });
@@ -105,7 +108,7 @@ app.post('/register', (request, response) => {
         password: bcrypt.hashSync(request.body.password, 10)
       };
       response.status('200');
-      response.cookie('user_id', genID);
+      request.session.user_id = genID;
       response.redirect('/urls');
     }
   } else {
@@ -116,7 +119,7 @@ app.post('/register', (request, response) => {
 
 app.get('/login', (request, response) => {
   let templateVars = {
-    user_id: request.cookies['user_id']
+    user_id: request.session.user_id
   };
   response.render('urls_login', templateVars);
 });
@@ -129,21 +132,20 @@ app.post('/login', (request, response) => {
     response.status(403);
     response.send('Speak "friend", and enter: You must enter the <a href="/login">correct email and password</a> to proceed.');
   }
-  // console.log(currentUser);
-  response.cookie('user_id', currentUser.id);
+  request.session.user_id = currentUser.id;
   response.redirect('/urls');
 });
 
 //on POST from _header form logout, clearCookies and logout
 app.post('/logout', (request, response) => {
-  response.clearCookie('user_id');
+  request.session = null/////MAYBE NO BRACKETS
   response.redirect('/urls');
 });
 
 app.get('/urls', (request, response) => {
   let templateVars = {
-    urls: urlsForUser(request.cookies['user_id']),
-    user_id: request.cookies['user_id']
+    urls: urlsForUser(request.session.user_id),
+    user_id: request.session.user_id
   };
   response.render('urls_index', templateVars);
 });
@@ -153,16 +155,16 @@ app.post('/urls', (request, response) => {
   let newKey = genRandomString(6);
   urlDatabase[newKey] = {
     longURL: request.body.longURL,
-    userID: request.cookies['user_id']
+    userID: request.session.user_id
   };
   response.redirect(`/urls/${newKey}`);
 });
 
 app.get('/urls/new',(request, response) => {
   let templateVars = {
-    user_id: request.cookies['user_id']
+    user_id: request.session.user_id
   };
-  if (!request.cookies['user_id']) {
+  if (!request.session.user_id) {
     response.send('There lies our hope, if hope it be: You must be logged in to shorten a new URL! Please <a href="/login">login</a> or <a href="/register">register.</a>');
     //response.redirect('/login');
   } else {
@@ -179,9 +181,9 @@ app.get('/urls/:id', (request, response) => {
   let templateVars = {
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id].longURL,
-    user_id: request.cookies['user_id']
+    user_id: request.session.user_id
   };
-  if (request.cookies['user_id']) {
+  if (request.session.user_id) {
     response.render('urls_show', templateVars);
   } else {
     response.send('Naughty little fly: You do not have permission to edit this!');
@@ -193,14 +195,14 @@ app.post('/urls/:id/update', (request, response) => {
   let updatedURL = request.params.id;
   urlDatabase[updatedURL] = {
     longURL: request.body.longURL,
-    userID: request.cookies['user_id']
+    userID: request.session.user_id
   };
   response.redirect('/urls');
 });
 
 //on POST response (from delete input), delete URL and refresh page
 app.post('/urls/:id/delete', (request, response) => {
-  if (request.cookies['user_id']) {
+  if (request.session.user_id) {
   let urlToDelete = request.params.id;
   delete urlDatabase[urlToDelete];
   response.redirect('/urls');
