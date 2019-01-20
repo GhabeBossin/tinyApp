@@ -1,12 +1,13 @@
-//TinyApp by Ghabe Bossin
+
+//  ~~~~~~~~TinyApp by Ghabe Bossin~~~~~~~ //
+
+// v---- DEPENDENCIES ----v
 
 // default port 8080
 const PORT = 8080;
 //added randomString npm package for key generation found here: https://www.npmjs.com/package/randomstring
 const randomString = require('randomstring');
 const bcrypt = require('bcrypt');
-//const bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword);
-//const hashedPassword = bcrypt.hashSync(request.body.password, 10);
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const express = require('express');
@@ -18,6 +19,8 @@ app.use(cookieSession({
   keys: ['One', 'Ring']
 }));
 app.use(bodyParser.urlencoded({extended: true}));
+
+// v---- DATABASES ----v
 
 const userData = {
   'userRandomID': {
@@ -42,6 +45,8 @@ const urlDatabase = {
     userID: 'user2RandomID'
     }
 };
+
+// v---- FUNCTIONS ----v
 
 //generates random 6 character alphanumberic string
 function genRandomString(num) {
@@ -71,6 +76,8 @@ function urlsForUser(userID) {
   return userURLs;
 }
 
+// v---- [/](landing) AND JSON ----v
+
 app.get('/', (request, response) => {
   if (request.session.user_id) {
     response.redirect('/urls');
@@ -83,11 +90,17 @@ app.get('/urls.json', (request, response) => {
   response.json(urlDatabase);
 });
 
+// v---- REGISTRATION ----v
+
 app.get('/register', (request, response) => {
   let templateVars = {
     user_id: request.session.user_id
   };
+  if (request.session.user_id) {
+    response.redirect('/urls');
+  } else {
   response.render('urls_register', templateVars);
+  }
 });
 
 //on POST from /register, stores email and password inputs, and generates id
@@ -121,10 +134,15 @@ app.post('/register', (request, response) => {
   }
 });
 
+// v---- LOGIN/OUT ----v
+
 app.get('/login', (request, response) => {
   let templateVars = {
     user_id: request.session.user_id
   };
+  if (request.session.user_id) {
+    response.redirect('/urls');
+  }
   response.render('urls_login', templateVars);
 });
 
@@ -142,9 +160,11 @@ app.post('/login', (request, response) => {
 
 //on POST from _header form logout, clearCookies and logout
 app.post('/logout', (request, response) => {
-  request.session = null/////MAYBE NO BRACKETS
+  request.session = null;
   response.redirect('/urls');
 });
+
+// v---- URLS ----v
 
 app.get('/urls', (request, response) => {
   let templateVars = {
@@ -154,7 +174,7 @@ app.get('/urls', (request, response) => {
   response.render('urls_index', templateVars);
 });
 
-//on POST generates new key and adds it to urlDatabase, then redirects to new URL based on key
+//on POST generates new key and adds it to urlDatabase, then redirects based on key
 app.post('/urls', (request, response) => {
   let newKey = genRandomString(6);
   urlDatabase[newKey] = {
@@ -164,6 +184,8 @@ app.post('/urls', (request, response) => {
   response.redirect(`/urls/${newKey}`);
 });
 
+// v- URLS/new -v
+//creation page for short URLs
 app.get('/urls/new',(request, response) => {
   let templateVars = {
     user_id: request.session.user_id
@@ -176,10 +198,7 @@ app.get('/urls/new',(request, response) => {
   }
 });
 
-app.get('/u/:shortURL', (request, response) => {
-  let longURL = urlDatabase[request.params.shortURL].longURL;
-  response.redirect(longURL);
-});
+// v- URLS/id -v
 
 app.get('/urls/:id', (request, response) => {
   let templateVars = {
@@ -212,6 +231,21 @@ app.post('/urls/:id/delete', (request, response) => {
   response.redirect('/urls');
   } else {
     response.send('Wicked. Tricksy. False: This is not yours to delete!');
+  }
+});
+
+// v---- U/:shortURL ----v
+
+app.get('/u/:shortURL', (request, response) => {
+ // console.log('TEST', urlDatabase);
+ // console.log('TEST1', urlDatabase[request.params.shortURL]);
+ //BUGGED ------v----- cannot find proper key (should be the generated shortURL)
+  if (!urlDatabase[request.params.shortURL].longURL) {
+    console.log('TEST SHORTURL', urlDatabase[request.params.shortURL].longURL);
+    response.send('For even the very wise cannot see all ends: We have no record of this shortened URL');
+  } else {
+    let longURL = urlDatabase[request.params.shortURL].longURL;
+    response.redirect(longURL);
   }
 });
 
