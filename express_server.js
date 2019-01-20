@@ -72,7 +72,11 @@ function urlsForUser(userID) {
 }
 
 app.get('/', (request, response) => {
-  response.send('Hello');
+  if (request.session.user_id) {
+    response.redirect('/urls');
+  } else {
+    response.redirect('/login')
+  }
 });
 
 app.get('/urls.json', (request, response) => {
