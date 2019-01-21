@@ -7,8 +7,9 @@ This is the first solo project in the Lighthouse Labs Web Developer bootcamp. It
 #### Screenshots
 
 ![Main /urls page where user sees the list of their shortened URLs.](./Screenshots/URLs.png)
+Main /urls page where user sees the list of their shortened URLs.
 ![Allows users to edit their previously shortened URLs.](./Screenshots/Update.png)
-
+Allows users to edit their previously shortened URLs.
 
 ## Project Description
 
