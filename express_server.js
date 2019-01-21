@@ -54,6 +54,7 @@ function genRandomString(num) {
   return ranString;
 }
 
+//validate login email and password
 function getCurrentUser(email, password) {
   for (let key in userData) {
     if (userData[key].email === email) {
@@ -65,6 +66,7 @@ function getCurrentUser(email, password) {
   return null;
 }
 
+//filters URLs to only show for their user
 function urlsForUser(userID) {
   userURLs = {};
   for (let key in urlDatabase) {
@@ -75,7 +77,11 @@ function urlsForUser(userID) {
   return userURLs;
 }
 
+// v~~~~~~~ ALL GET/POSTs ~~~~~~~~v
+// - all app.get redirect based on login status except the shortURL redirect.
+
 // v---- [/](landing) AND JSON ----v
+
 
 app.get('/', (request, response) => {
   if (request.session.user_id) {
@@ -91,14 +97,9 @@ app.get('/urls.json', (request, response) => {
 
 // v---- REGISTRATION ----v
 
+
 app.get('/register', (request, response) => {
-  // let user_id = request.session.user_id;
   if (!request.session.user_id) {
-    //maybe remove later?
-    // let templateVars = {
-    //   user_id: request.session.user_id,
-    //   email: userData[request.session.user_id].email
-    // };
     response.render('urls_register', { user_id: false });
   }
   if (request.session.user_id) {
@@ -106,7 +107,7 @@ app.get('/register', (request, response) => {
   }
 });
 
-//on POST from /register, stores email and password inputs, and generates id
+//on POST from /register, stores email and password inputs, and generates + sets cookie id
 app.post('/register', (request, response) => {
   let genID = genRandomString(14);
   let userKeys = Object.keys(userData);
@@ -139,19 +140,15 @@ app.post('/register', (request, response) => {
 
 // v---- LOGIN/OUT ----v
 
+
 app.get('/login', (request, response) => {
   if (!request.session.user_id) {
-    // let templateVars = {
-    //   user_id: request.session.user_id,
-    //   email: userData[request.session.user_id].email
-    // };
     response.render('urls_login', { user_id: false });
   }
   if (request.session.user_id) {
     response.redirect('/urls');
   }
 });
-// response.render('urls_login', templateVars);
 
 //on POST from _header form login, creates cookie storing user_id input
 app.post('/login', (request, response) => {
@@ -173,6 +170,7 @@ app.post('/logout', (request, response) => {
 
 // v---- URLS ----v
 
+
 //possible refactoring example
 app.get('/urls', (request, response) => {
   if (request.session.user_id) {
@@ -185,14 +183,14 @@ app.get('/urls', (request, response) => {
     response.render('urls_index', templateVars);
   }
   if (!request.session.user_id) {
-    response.send('Keep it secret... keep it safe: You must be <a href="/login">logged in</a> to view your URLs.');
+    response.send('Keep it secret... keep it safe: You must <a href="/register">register</a> or be <a href="/login">logged in</a> to view your URLs.');
   }
 });
 
 //on POST generates new key and adds it to urlDatabase, then redirects based on key
 app.post('/urls', (request, response) => {
   let newKey = genRandomString(6);
-
+  //ternary conditional template literal to fix inputs that do not have "http://"
   let longURL = request.body.longURL.includes('http') ? request.body.longURL : `http://${request.body.longURL}`;
 
   urlDatabase[newKey] = {
@@ -203,6 +201,7 @@ app.post('/urls', (request, response) => {
 });
 
 // v- URLS/new -v
+
 //creation page for short URLs
 app.get('/urls/new',(request, response) => {
   if (request.session.user_id) {
@@ -257,6 +256,7 @@ app.post('/urls/:id/delete', (request, response) => {
 
 // v---- U/:shortURL ----v
 
+//redirects from shortURL to longURL
 app.get('/u/:shortURL', (request, response) => {
 
   if (!urlDatabase.hasOwnProperty(request.params.shortURL)) {
@@ -267,15 +267,16 @@ app.get('/u/:shortURL', (request, response) => {
   }
 });
 
-// app.get('/hello', (request, response) => {
-//   response.send('<html><body>Hello <b>World</b></body></html>\n');
-// });
+// v---- PORT  ----v
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-
+// v---- currently does nothing but maybe splash page later ----v
+// app.get('/hello', (request, response) => {
+//   response.send('<html><body>Hello <b>World</b></body></html>\n');
+// });
 
 
 
