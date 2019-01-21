@@ -4,8 +4,8 @@
 
 This is the first solo project in the Lighthouse Labs Web Developer bootcamp. It currently meets all major functional/display requirements most minor requirements and I have fixed all bugs I have been able to find. My eventual goal is to update the app with better stylings.
 
-!["Main /urls page where user sees the list of their shortened URLs."](https://imgur.com/a65xQbO)
-!["Allows users to edit their previously shortened URLs."](https://imgur.com/uOmhlFe)
+["Main /urls page where user sees the list of their shortened URLs."](https://imgur.com/a65xQbO)
+["Allows users to edit their previously shortened URLs."](https://imgur.com/uOmhlFe)
 
 
 ## Project Description
