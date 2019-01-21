@@ -20,7 +20,10 @@ app.use(cookieSession({
 }));
 app.use(bodyParser.urlencoded({extended: true}));
 
+
+
 // v---- DATABASES ----v
+
 
 const userData = {
   'userRandomID': {
@@ -35,6 +38,11 @@ const userData = {
   }
 };
 
+
+
+
+
+
 const urlDatabase = {
   'b2xVn2': {
     longURL: 'http://www.lighthouselabs.ca',
@@ -47,6 +55,7 @@ const urlDatabase = {
 };
 
 // v---- FUNCTIONS ----v
+
 
 //generates random 6 character alphanumberic string
 function genRandomString(num) {
@@ -79,6 +88,7 @@ function urlsForUser(userID) {
 
 // v~~~~~~~ ALL GET/POSTs ~~~~~~~~v
 // - all app.get redirect based on login status except the shortURL redirect.
+
 
 // v---- [/](landing) AND JSON ----v
 
@@ -256,9 +266,9 @@ app.post('/urls/:id/delete', (request, response) => {
 
 // v---- U/:shortURL ----v
 
+
 //redirects from shortURL to longURL
 app.get('/u/:shortURL', (request, response) => {
-
   if (!urlDatabase.hasOwnProperty(request.params.shortURL)) {
     response.send('For even the very wise cannot see all ends: We have no record of this shortened URL');
   } else {
@@ -269,14 +279,9 @@ app.get('/u/:shortURL', (request, response) => {
 
 // v---- PORT  ----v
 
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-// v---- currently does nothing but maybe splash page later ----v
-// app.get('/hello', (request, response) => {
-//   response.send('<html><body>Hello <b>World</b></body></html>\n');
-// });
-
 
 
